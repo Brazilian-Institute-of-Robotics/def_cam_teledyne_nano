@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<package>
+  <name>def_genie_teledyne</name>
+
+  <version>2.0.1</version>
+  <description>The Dathomir teledyne package</description>
+
+  <maintainer email="ronaldo.evangelista@fieb.org.br">Ronaldo Evangelista</maintainer>
+  
+  <license>TODO</license>
+  
+  <url type="website">https://github.com/Brazilian-Institute-of-Robotics/takodana_gorax_framework/wiki</url>
+  <url type="bugtracker">https://github.com/Brazilian-Institute-of-Robotics/takodana_gorax_framework/issues</url>
+  <url type="repository">https://github.com/Brazilian-Institute-of-Robotics/takodana_gorax_framework</url>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>felucia_msgs</build_depend>
+  <build_depend>diagnostic_msgs</build_depend>
+  <build_depend>dynamixel_msgs</build_depend>
+
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>image_transport</build_depend>
+  <build_depend>felucia_commons</build_depend>
+  <build_depend>message_runtime</build_depend>
+  <build_depend>message_generation</build_depend>
+
+
+  <run_depend>roscpp</run_depend>
+
+  <run_depend>felucia_common_msgs</run_depend>
+  <run_depend>dynamic_reconfigure</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>felucia_msgs</run_depend>
+  <run_depend>diagnostic_msgs</run_depend>
+  <run_depend>dynamixel_msgs</run_depend>
+
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>image_transport</run_depend>
+  <run_depend>felucia_commons</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>message_generation</run_depend>
+
+  <export>
+  </export>
+</package>
