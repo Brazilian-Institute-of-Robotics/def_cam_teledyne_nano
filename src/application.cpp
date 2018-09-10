@@ -30,12 +30,11 @@ void App::receivedFrame(teledyne::Frame* frame)
   if (frame->status == GEVLIB_OK)
   {
       cv::Mat mat = cv::Mat(cv::Size(frame->width, frame->height), CV_8UC1, &frame->data[0]);
-      cv::Mat bgr;
-      cv::cvtColor(mat, bgr, CV_BayerBG2BGR);
-      std::string title = "NICEEEEEEE";
-      cv::namedWindow(title.c_str(), CV_WINDOW_NORMAL);
-      cv::imshow(title.c_str(), bgr);
-      cv::waitKey(25);
+      cv::cvtColor(mat, out, CV_BayerBG2BGR);
+    //   std::string title = "NICEEEEEEE";
+    //   cv::namedWindow(title.c_str(), CV_WINDOW_NORMAL);
+    //   cv::imshow(title.c_str(), out);
+    //   cv::waitKey(25);
   }
 
 }
@@ -57,5 +56,10 @@ void App::startStream()
 void App::receivedFrameCallback(teledyne::Frame frame, void *params) {
     App *pThis = (App*)params;
     pThis->receivedFrame(&frame);
+}
+
+cv::Mat* App::getCurrentImage()
+{
+    return &out;
 }
 

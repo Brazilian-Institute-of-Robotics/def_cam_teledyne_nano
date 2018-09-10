@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <camera.hpp>
 
 class App {
@@ -14,6 +15,7 @@ public:
     void saveFrame(cv::Mat mat);
     void frameToMat(teledyne::Frame frame, cv::Mat& dst);
     void startStream();
+    cv::Mat* getCurrentImage();
     /* This method should be static*/
     static void receivedFrameCallback(teledyne::Frame frame, void *params);
 private:
