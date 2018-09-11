@@ -11,7 +11,7 @@ find_package(PkgConfig)
 
 find_package(OpenCV 3 REQUIRED)
 find_package(Threads  REQUIRED)
-find_package(catkin  REQUIRED COMPONENTS roscpp cmake_modules message_generation image_transport cv_bridge)
+find_package(catkin  REQUIRED COMPONENTS roscpp cmake_modules message_generation image_transport cv_bridge camera_info_manager sensor_msgs)
 
 FILE(GLOB_RECURSE HEADER_FILES "include/*.h*")
 FILE(GLOB_RECURSE SRC_FILES "src/camera.cpp" "src/application.cpp")

@@ -12,22 +12,32 @@
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 
-class App {
-public:
-    App();
+#include <camera_info_manager/camera_info_manager.h>
+#include <sensor_msgs/CameraInfo.h>
+
+class App
+{
+  public:
+    App(ros::NodeHandle nh);
     ~App();
     void run(std::string camera_username, int argc, char **argv);
-    void receivedFrame(teledyne::Frame* frame);
+    void receivedFrame(teledyne::Frame *frame);
     void saveFrame(cv::Mat mat);
-    void frameToMat(teledyne::Frame frame, cv::Mat& dst);
+    void frameToMat(teledyne::Frame frame, cv::Mat &dst);
     void startStream();
-    cv::Mat* getCurrentImage();
+    cv::Mat *getCurrentImage();
     /* This method should be static*/
     static void receivedFrameCallback(teledyne::Frame frame, void *params);
-private:
+
+  private:
     teledyne::Camera camera;
     cv::Mat out;
-    ros::NodeHandle nh;
-    image_transport::Publisher pub;
+    ros::NodeHandle nh_;
+    image_transport::ImageTransport *it_;
+    image_transport::CameraPublisher image_pub_;
+
+    boost::shared_ptr<camera_info_manager::CameraInfoManager> cinfo_;
+    std::string camera_name_;
 };
+
 #endif // APPLICATION_H
