@@ -42,5 +42,5 @@ link_directories(
 
 set(SHARED_LIBRARIES Xext X11 GevApi CorW32 GenApi_gcc421_v3_0 GCBase_gcc421_v3_0 pthread stdc++ )
 
-add_executable(camera_example src/main.cpp ${SOURCES} ${SRC_FILES} ${HEADER_FILES})
+add_executable(camera_example src/application.cpp ${SOURCES} ${SRC_FILES} ${HEADER_FILES})
 target_link_libraries(camera_example pthread ${catkin_LIBRARIES} ${SHARED_LIBRARIES} stdc++ ${OpenCV_LIBS})
