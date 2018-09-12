@@ -36,7 +36,7 @@ class App
     image_transport::ImageTransport *it_;
     image_transport::CameraPublisher image_pub_;
 
-    boost::shared_ptr<camera_info_manager::CameraInfoManager> cinfo_;
+    camera_info_manager::CameraInfoManager *cinfo_;
     std::string camera_name_;
 };
 
