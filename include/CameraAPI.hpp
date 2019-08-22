@@ -9,48 +9,48 @@
 * @author Matheus Nascimento (@matheusns).
 * @ date October 2017
 */
-
-#ifndef DATHOMIR_INCLUDE_CAMERA_H
-#define DATHOMIR_INCLUDE_CAMERA_H
+#ifndef DRIVER_TELEDYNE_NANO_HPP_
+#define DRIVER_TELEDYNE_NANO_HPP_
 
 #include <exception>
 #include <iostream>
 #include <ostream>
+#include <string>
 #include <sched.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>
 #include <unistd.h>
+#include <opencv2/opencv.hpp>
 
-#include <opencv2/opencv.hpp>               
-#include <opencv2/core/core.hpp>            
-#include <opencv2/highgui/highgui.hpp>      
+#include "GigeV/gevapi.h"
 
-#include "cordef.h"             
-#include "GenApi/GenApi.h"		
-#include "gevapi.h"				
 
 #define NUM_BUF	8
+#define MAX_NETIF 8                         
+#define MAX_CAMERAS_PER_NETIF 32
+#define MAX_CAMERAS (MAX_NETIF * MAX_CAMERAS_PER_NETIF)
+
+
 
 namespace teledyne
 {
-/*! dathomir::enum that is used to indicate the camera current status. */
+
 enum enumStatus
 {
-    CAMERA_CONNECTED,       ///< Camera connected 
-    CAMERA_AVAILABLE,       ///< Camera available to connection
-    CAMERA_UNAVAILABLE      ///< Camera unavailable or disconnected
+    CAMERA_CONNECTED,
+    CAMERA_AVAILABLE,
+    CAMERA_UNAVAILABLE
 };
-/*! \struct Frame camera.hpp "include/camera.hpp"
+
+/*!
  *  \brief Struct that contains all necessary images features.
  */
 struct Frame {
-    Frame() 
-    : time(0)       
-    , width(0)      
-    , height(0)     
-    , depth(0)      
-    , status(1)      
+    Frame() : time(0)
+            , width(0)
+            , height(0)
+            , depth(0)
+            , status(1)
     {}
     /*! Parameterized constructor. */
     Frame(time_t time, int width, int height, int depth, int status)
@@ -58,12 +58,12 @@ struct Frame {
         data.resize(width * height * depth);
     }
 
-    time_t time;                    ///< Image timestamp
-    int width;                      ///< Image width
-    int height;                     ///< Image height
-    int depth;                      ///< Image depth
-    int status;                     ///< Image status
-    std::vector<uchar> data;        ///< Vector data 
+    time_t time;
+    int width;
+    int height;
+    int depth;
+    int status;
+    std::vector<uchar> data;
 };
 
 class Exception : public std::exception {
@@ -94,7 +94,7 @@ public:
         return _msg.c_str();
     }
 protected:
-    std::string _msg;   ///< Exception message.  
+    std::string _msg;
 };
 
 /*! \typedef  GRABCALLBACK function pointer.
@@ -648,10 +648,10 @@ private:
     pthread_cond_t _cond;           ///< Thread condition
 
     bool _snapshot;
-    bool _isRunning;                ///< Variable to indicates if the class is running 
-    bool _isTransfering;            ///< Variable to indicates if the transfering is running    
+    bool _isRunning;                ///< Variable to indicates if the class is running
+    bool _isTransfering;            ///< Variable to indicates if the transfering is running
 };
 
-} // namespace dathomir
+} // namespace teledyne
 
 #endif // DATHOMIR_INCLUDE_CAMERA_H

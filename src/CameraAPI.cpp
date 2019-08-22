@@ -1,9 +1,8 @@
 /**
-* @file camera.cpp
-* @brief This source contains the camera connections layers,
-* methods and parameters to acquire images.
+* @file CameraAPI.cpp
+* @brief This source contains the camera (Teledyne Genie Nano C2590)
+* connections layers, methods and parameters to acquire images.
 *
-* This contains the camera API to interacting with others applications.\
 * Available to set up all XML features, camera connections, enable some
 * features available and retrieve some important parameters to acquire images.
 *
@@ -11,11 +10,8 @@
 * @author Matheus Nascimento (@matheusns).
 * @ date July 2017
 */
-#include "camera.hpp"
+#include "CameraAPI.hpp"
 
-#define MAX_NETIF 8                         
-#define MAX_CAMERAS_PER_NETIF 32
-#define MAX_CAMERAS (MAX_NETIF * MAX_CAMERAS_PER_NETIF)    ///< Max amount of cameras
 
 namespace teledyne
 {
@@ -84,7 +80,7 @@ void Camera::open(const std::string &cameraName)
             {
                 GevSetFeatureValueAsString(_handle, "multipleROIMode", "Off");
 
-                if ((status = GevSetImageParameters(_handle, 2592, 2048, 0, 0, fMtBayerRG8)) != GEVLIB_OK)
+                if ((status = GevSetImageParameters(_handle, 2592, 2048, 0, 0, fmtBayerRG8)) != GEVLIB_OK)
                 {
                     throw Exception(std::string("GevSetImageParameters Error: " + std::to_string(status - USHRT_MAX - 1)));
                 }
