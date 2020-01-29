@@ -24,6 +24,7 @@ class CameraPublisher
                     const std::string &camera_serial_number,
                     const std::string &path_to_config,
                     const std::string &topic_name,
+                    const bool flip_cam,
                     const std::string &camera_name="teledyne_nano");
     ~CameraPublisher();
     void startStreaming();
@@ -39,6 +40,7 @@ class CameraPublisher
     std::shared_ptr<teledyne::Camera> cameraPtr;
     std::shared_ptr<camera_info_manager::CameraInfoManager> cameraInfoPtr;
     image_transport::CameraPublisher imagePublisher;
+    bool flip_{false};
 };
 
 #endif // APPLICATION_HPP_

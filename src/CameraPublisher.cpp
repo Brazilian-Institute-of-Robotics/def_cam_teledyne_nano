@@ -5,8 +5,10 @@ CameraPublisher::CameraPublisher(const ros::NodeHandle &node_handle,
          const std::string &camera_serial_number,
          const std::string &path_to_config,
          const std::string &topic_name,
+         const bool flip_cam,
          const std::string &camera_name)
 {
+    flip_ = flip_cam;
     cameraInfoPtr = std::make_shared<camera_info_manager::CameraInfoManager>(
                 node_handle,
                 camera_name,
@@ -68,6 +70,8 @@ void CameraPublisher::receivedFrame(teledyne::Frame *frame)
         cv::Size image_size(frame->width/4, frame->height/4);
         cv::Mat resized_frame;
         cv::resize(BGR_frame, resized_frame, image_size);
+        // Flip camera upsidedown
+        if(flip_ == true) cv::flip(resized_frame, resized_frame, -1);
 
 //        saveFrame(resized_frame);
         showFrames(resized_frame);
