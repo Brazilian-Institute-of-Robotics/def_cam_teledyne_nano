@@ -20,6 +20,7 @@
   <build_depend>image_transport</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>sensor_msgs</build_depend>
+  <build_depend>gige_vision_framework_dalsa</build_depend>
 
   <build_export_depend>camera_info_manager</build_export_depend>
   <build_export_depend>cv_bridge</build_export_depend>

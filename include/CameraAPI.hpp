@@ -22,7 +22,7 @@
 #include <unistd.h>
 #include <opencv2/opencv.hpp>
 
-#include "GigeV/gevapi.h"
+#include "gige_vision_framework_dalsa/gevapi.h"
 
 
 #define NUM_BUF	8

@@ -5,6 +5,7 @@ project(def_cam_teledyne_nano)
 set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11 -w")
 
 find_package(PkgConfig)
+find_package(gige_vision_framework_dalsa REQUIRED)
 find_package(OpenCV 3 REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
@@ -24,6 +25,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${gige_vision_framework_dalsa_INCLUDE_DIRS}
 )
 
 add_executable(camera_example
@@ -33,7 +35,7 @@ add_executable(camera_example
 )
 
 target_link_libraries(camera_example
-  GevApi
+  ${gige_vision_framework_dalsa_LIBRARIES}
   ${catkin_LIBRARIES}
   ${OpenCV_LIBS}
 )

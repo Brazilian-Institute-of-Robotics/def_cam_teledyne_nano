@@ -497,6 +497,8 @@ void Camera::startTransfer()
             throw Exception(std::string("Start transfer error:  " + std::to_string((short int)status)));
         }
         _isTransfering = true;
+
+        // GEVLIB_ERROR_NO_CAMERA
     }
 }
 

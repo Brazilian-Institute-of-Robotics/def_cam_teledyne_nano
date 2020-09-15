@@ -22,9 +22,9 @@ CameraPublisher::CameraPublisher(const ros::NodeHandle &node_handle,
     cameraPtr->enableAutoWhiteBalance();
     cameraPtr->applyAutoWhiteBalance();
 
-    std::cout << "Width = " << cameraPtr->getWidth() << std::endl;
-    std::cout << "Height = " << cameraPtr->getHeight() << std::endl;
-    std::cout << "FPS =  " << cameraPtr->getFPS() << std::endl;
+    ROS_INFO( "Width = %d", cameraPtr->getWidth());
+    ROS_INFO( "Height = %d", cameraPtr->getHeight());
+    ROS_INFO( "FPS = %d", cameraPtr->getFPS());
 }
 
 
@@ -65,7 +65,7 @@ void CameraPublisher::receivedFrame(teledyne::Frame *frame)
         cv::Mat BGR_frame;
         cv::cvtColor(bayer_frame, BGR_frame, CV_BayerBG2BGR);
         // Resize frame
-        cv::Size image_size(frame->width/4, frame->height/4);
+        cv::Size image_size(frame->width, frame->height);
         cv::Mat resized_frame;
         cv::resize(BGR_frame, resized_frame, image_size);
 
@@ -101,6 +101,7 @@ void CameraPublisher::publishFrame(const cv::Mat &frame)
                                         frame).toImageMsg();
     image->header.stamp = ros::Time::now();
     image->header.frame_id = "camera";
+    ROS_INFO_STREAM("Time is: " << frame.cols);
 
     // ROS_INFO_STREAM("Time is: " << image->header.stamp.sec);
     // get current CameraInfo data
@@ -110,5 +111,3 @@ void CameraPublisher::publishFrame(const cv::Mat &frame)
     cam_info->header.frame_id = image->header.frame_id;
     imagePublisher.publish(image, cam_info);
 }
-
-

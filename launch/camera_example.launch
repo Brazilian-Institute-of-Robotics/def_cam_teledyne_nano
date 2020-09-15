@@ -1,6 +1,7 @@
 <launch>
-    <node pkg="def_cam_teledyne_nano" type="camera_example" name="camera_example_node" required="true">
+    <node pkg="def_cam_teledyne_nano" type="camera_example" name="camera_example_node" required="true" output="screen">
         <param name="node_namespace" value="/dyn_ef_robot/camera1" type="str"/>
+        <remap from="/dyn_ef_robot/camera1/image_raw" to="/dyn_ef_robot/image_raw"/>
 <!--        <param name="camera_serial_number" value="S1112960" type="str"/>-->
         <param name="camera_serial_number" value="S1112945" type="str"/>
         <param name="path_to_config_file" value="package://def_cam_teledyne_nano/config/camera1.yaml" type="str"/>
