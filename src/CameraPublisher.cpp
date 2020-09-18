@@ -17,7 +17,7 @@ CameraPublisher::CameraPublisher(const ros::NodeHandle &node_handle,
     cameraPtr = std::make_shared<teledyne::Camera>(2592, 2048, fmtBayerRG8);
     cameraPtr->open(camera_serial_number);
     std::cout << "Opened" << std::endl;
-    cameraPtr->setFPS(20);
+    cameraPtr->setFPS(10);
     cameraPtr->setupCallback(CameraPublisher::receivedFrameCallback, this);
     cameraPtr->enableAutoWhiteBalance();
     cameraPtr->applyAutoWhiteBalance();
@@ -65,12 +65,12 @@ void CameraPublisher::receivedFrame(teledyne::Frame *frame)
         cv::Mat BGR_frame;
         cv::cvtColor(bayer_frame, BGR_frame, CV_BayerBG2BGR);
         // Resize frame
-        cv::Size image_size(frame->width, frame->height);
+        cv::Size image_size(frame->width / 2, frame->height / 2);
         cv::Mat resized_frame;
         cv::resize(BGR_frame, resized_frame, image_size);
 
 //        saveFrame(resized_frame);
-        showFrames(resized_frame);
+        // showFrames(resized_frame);
         publishFrame(resized_frame);
     }
 }
@@ -101,7 +101,7 @@ void CameraPublisher::publishFrame(const cv::Mat &frame)
                                         frame).toImageMsg();
     image->header.stamp = ros::Time::now();
     image->header.frame_id = "camera";
-    ROS_INFO_STREAM("Time is: " << frame.cols);
+    // ROS_INFO_STREAM("Time is: " << frame.cols);
 
     // ROS_INFO_STREAM("Time is: " << image->header.stamp.sec);
     // get current CameraInfo data
