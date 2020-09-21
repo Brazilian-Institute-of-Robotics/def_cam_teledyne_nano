@@ -16,6 +16,10 @@
 #include <camera_info_manager/camera_info_manager.h>
 #include <sensor_msgs/CameraInfo.h>
 
+enum class TeledynePixelFormat {
+  BAYER_RG8 = 0,
+  MONO = 1
+};
 
 class CameraPublisher
 {
@@ -36,9 +40,19 @@ class CameraPublisher
     void publishFrame(const cv::Mat &frame);
 
   private:
+    int getTeledynePixelFormat();
+    int getOpenCVPixelConversion();
+    std::string getRosImagePixelFormat();
+    void readParams(const ros::NodeHandle &node_handle);
     std::shared_ptr<teledyne::Camera> cameraPtr;
     std::shared_ptr<camera_info_manager::CameraInfoManager> cameraInfoPtr;
     image_transport::CameraPublisher imagePublisher;
+    TeledynePixelFormat pixelFormat;
+    std::string frameId;
+    int framePerSecond;
+    int frameWidth;
+    int frameHeight;
+    double temperatureThreshold;
 };
 
 #endif // APPLICATION_HPP_

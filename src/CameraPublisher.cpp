@@ -7,17 +7,18 @@ CameraPublisher::CameraPublisher(const ros::NodeHandle &node_handle,
          const std::string &topic_name,
          const std::string &camera_name)
 {
+    ros::NodeHandle image_params_handle(node_handle, "image");
     cameraInfoPtr = std::make_shared<camera_info_manager::CameraInfoManager>(
                 node_handle,
                 camera_name,
                 path_to_config);
+    readParams(image_params_handle);
     imagePublisher = image_transport::ImageTransport(
                 node_handle).advertiseCamera( topic_name, 1 );
-
-    cameraPtr = std::make_shared<teledyne::Camera>(2592, 2048, fmtBayerRG8);
+    cameraPtr = std::make_shared<teledyne::Camera>(2592, 2048, getTeledynePixelFormat());
     cameraPtr->open(camera_serial_number);
     std::cout << "Opened" << std::endl;
-    cameraPtr->setFPS(10);
+    cameraPtr->setFPS(framePerSecond);
     cameraPtr->setupCallback(CameraPublisher::receivedFrameCallback, this);
     cameraPtr->enableAutoWhiteBalance();
     cameraPtr->applyAutoWhiteBalance();
@@ -27,6 +28,58 @@ CameraPublisher::CameraPublisher(const ros::NodeHandle &node_handle,
     ROS_INFO( "FPS = %d", cameraPtr->getFPS());
 }
 
+void CameraPublisher::readParams(const ros::NodeHandle &node_handle) {
+  int pixel_format;
+  /* TODO Fix image_format parameter */
+  // node_handle.param<int>("image_format", pixel_format, 0);
+
+  pixelFormat = static_cast<TeledynePixelFormat>(pixel_format);
+  node_handle.param<std::string>("frame_id", frameId, "camera");
+  node_handle.param<int>("fps", framePerSecond, 5);
+  ROS_WARN("FPS %u", framePerSecond);
+  node_handle.param<int>("width", frameWidth, cameraInfoPtr->getCameraInfo().width);
+  node_handle.param<int>("height", frameHeight, cameraInfoPtr->getCameraInfo().height);
+  node_handle.param<double>("temperature_threshold", temperatureThreshold, 56);
+  if (frameWidth <= 0 || frameHeight <= 0) {
+    ROS_WARN("Could not read Height and Width parameters from server, seting default");
+    frameWidth = 2592;
+    frameHeight = 2048;
+  }
+}
+
+
+int CameraPublisher::getTeledynePixelFormat() {
+  switch (pixelFormat) {
+    case TeledynePixelFormat::BAYER_RG8:
+      return fmtBayerRG8;
+      break;
+    case TeledynePixelFormat::MONO:
+      return fmtMono8;
+      break;
+  }
+}
+
+int CameraPublisher::getOpenCVPixelConversion() {
+  switch (pixelFormat) {
+    case TeledynePixelFormat::BAYER_RG8:
+      return CV_BayerBG2BGR;
+      break;
+    case TeledynePixelFormat::MONO:
+      return CV_GRAY2BGR;
+      break;
+  }
+}
+
+std::string CameraPublisher::getRosImagePixelFormat() {
+  switch (pixelFormat) {
+    case TeledynePixelFormat::BAYER_RG8:
+      return "bgr8";
+      break;
+    case TeledynePixelFormat::MONO:
+      return "mono8";
+      break;
+  }
+}
 
 CameraPublisher::~CameraPublisher()
 {
@@ -63,15 +116,20 @@ void CameraPublisher::receivedFrame(teledyne::Frame *frame)
         cv::Mat bayer_frame = cv::Mat(cv::Size(frame->width, frame->height), CV_8UC1, &frame->data[0]);
         // Convert frame
         cv::Mat BGR_frame;
-        cv::cvtColor(bayer_frame, BGR_frame, CV_BayerBG2BGR);
+        cv::cvtColor(bayer_frame, BGR_frame, getOpenCVPixelConversion());
         // Resize frame
-        cv::Size image_size(frame->width / 2, frame->height / 2);
+        cv::Size image_size(frameWidth, frameHeight);
         cv::Mat resized_frame;
         cv::resize(BGR_frame, resized_frame, image_size);
+        if (cameraPtr->getTemperature() >= temperatureThreshold) {
+          ROS_INFO_STREAM("Camera Termperatures: " << cameraPtr->getTemperature());
+        }
 
 //        saveFrame(resized_frame);
         // showFrames(resized_frame);
         publishFrame(resized_frame);
+    } else {
+      ROS_ERROR_STREAM("Teledyne error: " << frame->status);
     }
 }
 
@@ -89,7 +147,7 @@ void CameraPublisher::saveFrame(const cv::Mat &frame)
 void CameraPublisher::showFrames(const cv::Mat &frame)
 {
     cv::imshow("Live", frame);
-    cv::waitKey(1);    
+    cv::waitKey(1);
 }
 
 
@@ -97,10 +155,10 @@ void CameraPublisher::publishFrame(const cv::Mat &frame)
 {
     sensor_msgs::ImagePtr image = cv_bridge::CvImage(
                                         std_msgs::Header(),
-                                        "bgr8",
+                                        getRosImagePixelFormat(),
                                         frame).toImageMsg();
     image->header.stamp = ros::Time::now();
-    image->header.frame_id = "camera";
+    image->header.frame_id = frameId;
     // ROS_INFO_STREAM("Time is: " << frame.cols);
 
     // ROS_INFO_STREAM("Time is: " << image->header.stamp.sec);

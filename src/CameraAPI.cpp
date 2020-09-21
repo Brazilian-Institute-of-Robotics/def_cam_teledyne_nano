@@ -80,9 +80,9 @@ void Camera::open(const std::string &cameraName)
             {
                 GevSetFeatureValueAsString(_handle, "multipleROIMode", "Off");
 
-                if ((status = GevSetImageParameters(_handle, 2592, 2048, 0, 0, fmtBayerRG8)) != GEVLIB_OK)
+                if ((status = GevSetImageParameters(_handle, 2592, 2048, 0, 0, _format)) != GEVLIB_OK)
                 {
-                    throw Exception(std::string("GevSetImageParameters Error: " + std::to_string(status - USHRT_MAX - 1)));
+                    throw Exception(std::string("GevSetImageParameters Error: " + std::to_string(status)));
                 }
 
                 tuneStreaming();
@@ -109,7 +109,7 @@ void Camera::tuneStreaming()
     GEV_CAMERA_OPTIONS camOptions; ///< Camera options object
     // Adjust the camera interface options
     GevGetCameraInterfaceOptions(_handle, &camOptions);
-    camOptions.streamMemoryLimitMax = 64 * 2048 * 2048; // Adjust packet memory buffering limit.
+    camOptions.streamMemoryLimitMax = 8 * 2592 * 2048; // Adjust packet memory buffering limit.
     camOptions.streamFrame_timeout_ms = 1001;           // Internal timeout for frame reception.
     GevSetCameraInterfaceOptions(_handle, &camOptions);
 }
@@ -290,11 +290,11 @@ std::string Camera::getPixelFormat()
     return response;
 } 
 
-float Camera::getFPS()
+double Camera::getFPS()
 {
     int type;
-    float fps;
-    GevGetFeatureValue(_handle, "AcquisitionFrameRate", &type, sizeof(float), &fps);
+    double fps;
+    GevGetFeatureValue(_handle, "AcquisitionFrameRate", &type, sizeof(double), &fps);
     return fps;
 }
 
@@ -557,6 +557,23 @@ void Camera::setupCallback(GRABCALLBACK callback, void *params)
     }
 }
 
+const std::string Camera::outputFrameError(int frame_error) {
+  switch (frame_error) {
+    case GEV_FRAME_STATUS_PENDING:
+      return "Frame not ready yet";
+    case GEV_FRAME_STATUS_TIMEOUT:
+      return "Frame timed out";
+    case GEV_FRAME_STATUS_OVERFLOW:
+      return "Frame overflow, buffer was full";
+    case GEV_FRAME_STATUS_BANDWIDTH:
+      return "Frame bandwith not enought, too many resends";
+    case GEV_FRAME_STATUS_LOST:
+      return "Lost resend operations";
+    case GEV_FRAME_STATUS_RELEASED:
+      return "Device has been released";
+  }
+}
+
 void *Camera::imageReceiveThread(void *params)
 {
     GEV_STATUS status = 0;
@@ -569,7 +586,7 @@ void *Camera::imageReceiveThread(void *params)
         //  std::cout << "Snapshot Wait for the next image Error: "<<(short int)status<<std::endl;
         if (img != NULL && pThis->_grabCallback != NULL)
         {
-            if (status == GEVLIB_OK && img->status == GEVLIB_OK)
+            if (status == GEVLIB_OK && img->status == GEV_FRAME_STATUS_RECVD)
             {
                 pthread_mutex_lock(&pThis->_mutex);
                 pThis->imageToFrame(img, pThis->_frame);
@@ -584,6 +601,9 @@ void *Camera::imageReceiveThread(void *params)
                 {
                     tmpFrame = pThis->_frame;
                 }
+            } else {
+              
+              std::cerr << outputFrameError(img->status) << std::endl;
             }
         }
     }

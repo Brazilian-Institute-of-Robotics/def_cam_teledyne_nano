@@ -253,7 +253,7 @@ public:
     *
     *   @return float.
     */
-    float getFPS();
+    double getFPS();
     /** @brief Returns the temperature of the current device in degrees Celsius.
     *
     *   Returns the temperature of the current device in degrees Celsius. Maximum temperature should not 
@@ -619,6 +619,8 @@ public:
      void releaseBuffer();
 
 private:
+
+    static const std::string outputFrameError(int frame_error);
     /** @brief Thread that receives the frames acquired.
     *
     *   This Thread returns, using the _grabCallback function pointer, the frames acquired.
