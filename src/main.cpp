@@ -37,10 +37,11 @@ int main(int argc, char **argv)
     string camera_serial_number = getParameter<string>(nh, "camera_serial_number");
     string path_to_config_file = getParameter<string>(nh, "path_to_config_file");
     string topic_name = getParameter<string>(nh, "topic_name");
+    string camera_name = getParameter<string>(nh, "camera_name");
 
 
     CameraPublisher camera_publisher(nh, camera_serial_number,
-                                     path_to_config_file, topic_name);
+                                     path_to_config_file, topic_name, camera_name);
     camera_publisher.startStreaming();
 
     ros::spin();

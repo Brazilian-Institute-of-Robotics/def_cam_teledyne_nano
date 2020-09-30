@@ -39,6 +39,7 @@ class CameraPublisher
     std::shared_ptr<teledyne::Camera> cameraPtr;
     std::shared_ptr<camera_info_manager::CameraInfoManager> cameraInfoPtr;
     image_transport::CameraPublisher imagePublisher;
+    std::string camera_name_;
 };
 
 #endif // APPLICATION_HPP_

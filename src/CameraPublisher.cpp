@@ -7,6 +7,7 @@ CameraPublisher::CameraPublisher(const ros::NodeHandle &node_handle,
          const std::string &topic_name,
          const std::string &camera_name)
 {
+    camera_name_ = camera_name;
     cameraInfoPtr = std::make_shared<camera_info_manager::CameraInfoManager>(
                 node_handle,
                 camera_name,
@@ -100,7 +101,7 @@ void CameraPublisher::publishFrame(const cv::Mat &frame)
                                         "bgr8",
                                         frame).toImageMsg();
     image->header.stamp = ros::Time::now();
-    image->header.frame_id = "camera";
+    image->header.frame_id = camera_name_;
     // ROS_INFO_STREAM("Time is: " << frame.cols);
 
     // ROS_INFO_STREAM("Time is: " << image->header.stamp.sec);
