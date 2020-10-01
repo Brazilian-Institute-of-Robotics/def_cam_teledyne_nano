@@ -53,6 +53,7 @@ class CameraPublisher
     int frameWidth;
     int frameHeight;
     double temperatureThreshold;
+    std::string cameraName;
 };
 
 #endif // APPLICATION_HPP_

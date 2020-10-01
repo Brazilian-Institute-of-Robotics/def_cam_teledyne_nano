@@ -109,7 +109,7 @@ void Camera::tuneStreaming()
     GEV_CAMERA_OPTIONS camOptions; ///< Camera options object
     // Adjust the camera interface options
     GevGetCameraInterfaceOptions(_handle, &camOptions);
-    camOptions.streamMemoryLimitMax = 8 * 2592 * 2048; // Adjust packet memory buffering limit.
+    camOptions.streamMemoryLimitMax = 64 * 2592 * 2048; // Adjust packet memory buffering limit.
     camOptions.streamFrame_timeout_ms = 1001;           // Internal timeout for frame reception.
     GevSetCameraInterfaceOptions(_handle, &camOptions);
 }

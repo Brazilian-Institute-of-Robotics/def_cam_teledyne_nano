@@ -8,6 +8,7 @@ CameraPublisher::CameraPublisher(const ros::NodeHandle &node_handle,
          const std::string &camera_name)
 {
     ros::NodeHandle image_params_handle(node_handle, "image");
+    cameraName = camera_name;
     cameraInfoPtr = std::make_shared<camera_info_manager::CameraInfoManager>(
                 node_handle,
                 camera_name,
@@ -36,7 +37,6 @@ void CameraPublisher::readParams(const ros::NodeHandle &node_handle) {
   pixelFormat = static_cast<TeledynePixelFormat>(pixel_format);
   node_handle.param<std::string>("frame_id", frameId, "camera");
   node_handle.param<int>("fps", framePerSecond, 5);
-  ROS_WARN("FPS %u", framePerSecond);
   node_handle.param<int>("width", frameWidth, cameraInfoPtr->getCameraInfo().width);
   node_handle.param<int>("height", frameHeight, cameraInfoPtr->getCameraInfo().height);
   node_handle.param<double>("temperature_threshold", temperatureThreshold, 56);
