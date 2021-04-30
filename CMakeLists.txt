@@ -39,6 +39,7 @@ target_link_libraries(camera_example
 install(TARGETS camera_example RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 if(CATKIN_ENABLE_TESTING)
+
   find_package(roslaunch REQUIRED)
   roslaunch_add_file_check(launch)
 
