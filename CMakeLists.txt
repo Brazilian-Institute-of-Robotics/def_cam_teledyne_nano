@@ -1,10 +1,9 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.1.3)
 
 project(def_cam_teledyne_nano)
 
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11 -w")
+set(CMAKE_CXX_STANDARD 11)
 
-find_package(PkgConfig)
 find_package(gige_vision_framework_dalsa REQUIRED)
 find_package(OpenCV 3 REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
@@ -15,8 +14,6 @@ find_package(catkin REQUIRED COMPONENTS
   image_transport
   camera_info_manager
 )
-
-roslaunch_add_file_check(launch)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -41,3 +38,10 @@ target_link_libraries(camera_example
 )
 
 install(TARGETS camera_example RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+if(CATKIN_ENABLE_TESTING)
+
+  find_package(roslaunch REQUIRED)
+  roslaunch_add_file_check(launch)
+
+endif()
