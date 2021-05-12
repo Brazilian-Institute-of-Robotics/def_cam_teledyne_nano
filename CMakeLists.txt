@@ -8,7 +8,6 @@ find_package(gige_vision_framework_dalsa REQUIRED)
 find_package(OpenCV 3 REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  roslaunch
   cv_bridge
   sensor_msgs
   image_transport
